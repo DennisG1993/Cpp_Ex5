@@ -1,0 +1,254 @@
+#include <iostream>
+using namespace std;
+using std::string;
+#include "product.hpp"
+#include "zip.hpp"
+#include "powerset.hpp"
+#include "chain.hpp"
+#include "range.hpp"
+#include "badkan.hpp"
+
+using namespace itertools;
+
+int main() {
+  badkan::TestCase testcase;
+  int grade=0;
+  int signal = setjmp(badkan::longjmp_buffer);
+  if (signal == 0) {
+      
+      
+      string regular = ""; 
+      string one = ""; 
+      string chars = "";
+      string d = "";
+      string regularExpected = "01234567";
+      string oneExpected = "1";
+      string charsExpected = "abcdef";
+      string dExpected = "0.71.72.73.74.7";
+           
+    
+    for(int i : range(0,8)){
+        
+        regular+=to_string(i);
+    }
+    
+    for(int i : range(1,2)){
+        
+        one+=to_string(i);
+    }
+    
+    for(char i : range('a','g')){
+        
+        chars+=to_string(i);
+    }
+    
+    for(double i : range(0.7,5.7)){
+        
+        d+=to_string(i);
+    }
+   
+   
+   testcase.setname("Range checks")
+//   .CHECK_OK(range a(0,8))
+//   .CHECK_OK(range b(1,2))
+//   .CHECK_OK(range c('a','g'))
+//   .CHECK_OK(range d(0.7,5.7))
+   .CHECK_EQUAL(regular, regularExpected)
+   .CHECK_EQUAL(one, oneExpected)
+   .CHECK_EQUAL(chars, charsExpected)
+   .CHECK_EQUAL(d, dExpected)
+   
+;
+
+   // CHAIN !! 
+
+      regular = ""; 
+      one = ""; 
+      chars = "";
+      d = "";
+    regularExpected=  "789101112212223242526"  ;
+        oneExpected="kabaso212223242526";
+        charsExpected="kabasoab";
+        dExpected="kabaso2.23.24.2";
+     
+    
+    for(int i : chain(range(7,13), range(21,27))){
+        
+        regular+=to_string(i);
+    }
+    
+    for(char i : chain(string("kabaso"), range(21,27))){
+        
+        one+=to_string(i);
+    }
+    
+    for(char i :chain(string("kabaso"), range('a','c'))){
+        
+        chars+=to_string(i);
+    }
+    
+    for(auto i :chain(string("kabaso"), range(2.2,5.2))){
+        
+        d+=to_string(i);
+    }
+   
+   
+   testcase.setname()
+   .CHECK_EQUAL(regular, regularExpected)
+   .CHECK_EQUAL(one, oneExpected)
+   .CHECK_EQUAL(chars,charsExpected)
+   .CHECK_EQUAL(d, dExpected)
+   
+   ;
+   
+      // ZIP !! 
+      
+      regular = ""; 
+      one = ""; 
+      chars = "";
+      d = "";
+    regularExpected=  "721822923102411251226";
+        oneExpected="a21r22i23c24";
+        charsExpected="aarbiccd";
+        dExpected="72.283.294.2"  ;   
+     
+    
+    for(auto i : zip(range(7,13), range(21,27))){
+        
+        regular+=to_string(i);
+    }
+    
+    for(auto i : zip(string("aric"), range(21,25)){
+        
+        one+=to_string(i);
+    }
+    
+    for(auto i :zip(string("aric"), range('a','d'))){
+        
+        chars+=to_string(i);
+    }
+    
+    for(auto i :zip(range(7,10), range(2.2,5.2))){
+        
+        d+=to_string(i);
+    }
+   
+   
+   testcase.setname("zip checks")
+   .CHECK_EQUAL(regular, regularExpected)
+   .CHECK_EQUAL(one, oneExpected)
+   .CHECK_EQUAL(chars,charsExpected)
+   .CHECK_EQUAL(d, dExpected)
+   
+   ;
+      
+ // PRODUCT
+ 
+      regular = ""; 
+      one = ""; 
+      chars = "";
+      d = "";
+    regularExpected=  "7217227237248218228238249219229239241021102210231024";
+        oneExpected="t21t22t23a21a22a23l21l22l23";
+        charsExpected="tatbtcaaabaclalblc";
+        dExpected="72.2"         ;
+     
+    
+    for(auto i : product(range(7,11), range(21,25))){
+        
+        regular+=to_string(i);
+    }
+    
+    for(auto i : product(string("tal"), range(21,24)){
+        
+        one+=to_string(i);
+    }
+    
+    for(auto i :product(string("tal"), range('a','d'))){
+        
+        chars+=to_string(i);
+    }
+    
+    for(auto i :product(range(7,8), range(2.2,3.2))){
+        
+        d+=to_string(i);
+    }
+   
+   
+   testcase.setname("product checks")
+   .CHECK_EQUAL(regular, regularExpected)
+   .CHECK_EQUAL(one, oneExpected)
+   .CHECK_EQUAL(chars, charsExpected)
+   .CHECK_EQUAL(d, dExpected)
+   
+   ;
+   
+   // powerset
+ 
+ 
+      regular = ""; 
+      one = ""; 
+      chars = "";
+      d = "";
+      string prod="";
+    regularExpected=  "{}{7}{8}{7,8}{9}{7,9}{8,9}{7,8,9}";
+        oneExpected="{}";
+        charsExpected="{}{t}{a}{t,a}{l}{2}{1,2}{t,1}{t,2}{a,1}{a,2}{t,a,1}{t,a,2}{a,1,2}{t,1,2}{t,a,1,2}";
+        dExpected="{}{7}{2.2}{7,2.2}"   ;
+        string prodExpected = "{}{7}{2.2}{7,2.2}";
+     
+    
+    for(auto i : powerset(range(7,10))){
+        
+        regular+=to_string(i);
+    }
+    
+    for(auto i : powerset(range(21,21)){
+        
+        one+=to_string(i);
+    }
+    
+    for(auto i :powerset(chain (string("ta"), range(1,3)))){ //powerset(ta12)
+        
+        chars+=to_string(i);
+    }
+    
+    for(auto i :powerset(zip(range(7,8), range('a','b')))){ // 7a 
+        
+        d+=to_string(i);
+    }
+    
+     for(auto i :powerset(product(range(7,8), range(2.2,3.2)))){ // (7)(2.2)
+        
+        d+=to_string(i);
+    }
+   
+   
+   
+   testcase.setname("powerset checks")
+   .CHECK_EQUAL(regular, regularExpected) // 2^3
+   .CHECK_EQUAL(one, oneExpected) // 2^0
+   .CHECK_EQUAL(chars, charsExpected) // 2^4
+   .CHECK_EQUAL(d, dExpected) // 2^2
+   .CHECK_EQUAL(prod, prodExpected) // 2^2
+
+   
+   ;
+   
+   
+   
+
+    
+    
+    
+    
+      
+       
+        grade = testcase.grade();
+    } else {
+      testcase.print_signal(signal);
+      grade = 0;
+    }
+    cout <<  "*** Grade: " << grade << " ***" << endl;
+    return grade;
+}
