@@ -1,62 +1,82 @@
-#pragma once
 
 namespace itertools{
 
+	template<typename T1,typename T2>
+	class chain{
 
-   template <typename T, typename T_2>
-   class chain{
+		typename T1::iterator L_Iterable;
+		typename T2::iterator R_Iterable;
+		typename T1::iterator L_Iterable_end;
+		typename T2::iterator R_Iterable_end;
 
-   public:
-       T L_Iterable;
-       T_2 R_Iterable;
-
-       chain(T left, T_2 right) : L_Iterable(left),R_Iterable(right) {}
-
-       class iterator{
-
-         typename T::iterator L_Iter;
-         typename T_2::iterator R_Iter;
-
-       public:
-
-           iterator(T left, T_2 right) : L_Iter(left),R_Iter(right) {}
-
-            T& operator*(){
-               return L_Iter;
-           }
-
-           iterator& operator++(){
-               L_Iter++;
-               return *this;
-           }
-
-           iterator &operator++(int){
-               iterator tmp = *this;
-               L_Iter++;
-               return tmp;
-           }
-
-           bool operator==(const iterator& other)const{
-             return (L_Iter == other.L_Iter) || (R_Iter == other.R_Iter);
-          }
-
-          bool operator!=(const iterator& other)const{
-             return !(this == other);
-          }
-
-       };
+		public:
+			chain(T1 left,T2 right):
+			L_Iterable( left.begin() ),
+			R_Iterable( right.begin() ),
+			L_Iterable_end( left.end() ),
+			R_Iterable_end( right.end() ){
+			}
 
 
-       auto begin(){
-           return L_Iterable.begin();
-           //return chain::iterator<decltype(first.begin()),decltype(second.begin())>(first.begin(),second.begin()); // add operators
+			class iterator{
+				typename T1::iterator L_Iterable;
+				typename T2::iterator R_Iterable;
+				typename T1::iterator L_Iterable_end;
+				bool isLeft;
 
-       }
 
-       auto end(){
-          return L_Iterable.end();
-          //return chain::iterator<decltype(first.end()),decltype(second.end())>(first.end(),second.end()); // add operators
-       }
+				public:
+					iterator(typename T1::iterator left,typename T2::iterator right,typename T1::iterator left_end,bool is_left)
+					:L_Iterable(left),R_Iterable(right),L_Iterable_end(left_end),isLeft(is_left){
 
-   };
+					}
+
+					bool operator!=(const iterator& other)const{
+						return L_Iterable != other.L_Iterable || R_Iterable != other.R_Iterable;
+
+					}
+
+					bool operator==(const iterator& other)const{
+						return !(  L_Iterable != other.L_Iterable || R_Iterable != other.R_Iterable );
+					}
+
+					iterator& operator++() {
+						if(isLeft){
+							++L_Iterable;
+
+							if(L_Iterable == L_Iterable_end){
+								isLeft = false;}
+						}else{
+							++R_Iterable;
+                  }
+						return *this;
+					}
+
+					const auto& operator*(){
+						if(isLeft) return *L_Iterable;
+						else return *R_Iterable;
+					}
+
+
+			};
+
+			iterator begin() const{
+				return iterator(L_Iterable,R_Iterable,L_Iterable_end, true);
+			}
+
+			iterator end() const{
+				return iterator(L_Iterable_end,R_Iterable_end,
+				L_Iterable_end, false);
+			}
+	};
+
+	template<typename T1,typename T2>
+	ostream& operator<< (ostream& os, const chain<T1,T2>& ch) {
+		os << "test";
+		return os;
+	}
+
+
+
+
 }
