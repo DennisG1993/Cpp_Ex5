@@ -1,30 +1,84 @@
-#pragma once
+#include "iostream"
+#include <set>
+#include <cmath>
+#include <iostream>
+#include <iterator>
 
-namespace itertools{
+using namespace std;
 
+namespace itertools {
 
-template <typename T>
-class powerset
-{
+    template <class T>
+    class powerset {
+    private:
+        T iterable;
+        uint setSize;
+
     public:
-    T group;
+    powerset(T start) : iterable(start) {
+        setSize = 0;
+        for(auto i : start) {
+            ++setSize;
+        }
+    }
 
-    powerset(T a) : group(a){}
+        class const_iterator {
+        private:
+        int size;
+        T powerSet;
 
-    class iterator{
-        T _start;
+        public:
+            const_iterator(const T& powerset, int i):powerSet(powerset) , size(i) {}
 
-    public:
-        iterator(T start) : _start(start){}
+            const_iterator& operator++() {
+                ++size;
+                return *this;
+            }
 
+            auto operator*() const {
+               std::set<typename std::remove_reference<typename std::remove_const<decltype(*(iterable.begin()))>::type>::type> mySet = {};
+               int i = 1;
+               for (auto item : powerSet) {
+                     if (i & size) {
+                        mySet.insert(item);
+                        }
+                     i <<= 1;}
+               return mySet;
+               }
+
+            const const_iterator& operator++(int) {
+                const_iterator temp = *this;
+                ++size;
+                return temp;
+            }
+
+            bool operator!=(const const_iterator& other) {
+                return !(size == other.size);
+            }
+        };
+
+        auto begin() const{
+            return const_iterator(iterable, 0);
+        }
+        auto end() const{
+            return const_iterator(iterable, pow(2, setSize));
+            }
     };
 
-    auto begin(){
-        return group.begin();
-    }
+template <typename T2>
+std::ostream &operator<<(std::ostream &os, const std::set<T2> &out){
+   os << "{";
 
-    auto end(){
-        return group.end();
+    auto itr = out.begin();
+    if(itr != out.end()){
+        os << *itr;
+        ++itr;
     }
-};
+    while (itr != out.end()){
+        os << ',' << *itr;
+        ++itr;
+    }
+    os << "}";
+    return os;
+   }
 }

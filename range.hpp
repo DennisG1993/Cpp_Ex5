@@ -1,56 +1,56 @@
 #pragma once
+#include <iostream>
 
 namespace itertools{
 
+    template<typename T>
 
-   template <typename T>
-   class range
-   {
+    class range{
+    private:
+        T _start;
+        T _end;
+    public:
 
-   public:
-       T _start;
-       T _end;
+        range(const T& begins,const T& ends){
+            _start=begins;
+            _end=ends;
+        }
 
-       range(T first, T last) : _start(first),_end(last) {}
+        class const_iterator{
+            private:
+            T itr;
 
-       class iterator
-       {
-           T _val;
+            public:
+            const_iterator(T iter): itr(iter) {}
 
-       public:
-          iterator( T val) :_val(val){}
+            const T operator*()const{
+                return  itr;
+            }
+            //prefix
+            const_iterator& operator++(){
+                itr++;
+                return *this;
+            }
+            //postfix
+            const const_iterator operator ++(int){
+                const_iterator temp =*this;
+                itr++;
+                return temp;
+            }
+            bool operator==(const const_iterator& other) const {
+                return itr==other.itr;
+            }
+            bool operator!=(const const_iterator& other) const {
+                return itr!=other.itr;
+            }
+        };
 
-           iterator& operator++(){
-               _val++;
-               return *this;
-           }
-
-           T& operator*(){
-               return _val;
-           }
-
-           iterator &operator++(int){
-               iterator tmp = *this;
-               _val++;
-               return tmp;
-           }
-
-           bool operator!=(const iterator& other)const{
-             return this->_val != other._val;
-           }
-
-           bool operator==(const iterator& other)const{
-             return this->_val == other._val;
-           }
-       };
-
-       iterator begin(){
-           return range<T>::iterator(_start);
-       }
-
-       iterator end(){
-           return range<T>::iterator(_end);
-       }
-
-   };
+        public:
+        const_iterator begin() const{
+         return const_iterator(_start);
+        }
+        const_iterator end() const{
+            return const_iterator(_end);
+        }
+    };
 }
